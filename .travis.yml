@@ -1,0 +1,12 @@
+language: generic
+sudo: required
+services:
+  - docker
+
+# series command before start to run test
+before_install:
+  - docker build -t nsnhatlong/docker -f Dockerfile.dev .
+
+# all command to run test suite
+script:
+  - docker run -e CI=true run nsnhatlong/docker npm run test
