@@ -8,6 +8,7 @@ function App() {
   return (
     <BrowserRouter>
       <div>
+        <h1>Message from nsnhatlong to the world</h1>
         <header>
           <Link to="/">Home</Link>
           <Link to="/otherpage">Other Pages</Link>
