@@ -4,7 +4,7 @@ FROM node:lts-alpine3.16 as builder
 WORKDIR /app
 
 RUN npm i -g npm@9.3.1
-COPY ./package*.json .
+COPY ./package.json .
 RUN npm install
 COPY . .
 RUN npm run build

@@ -28,11 +28,14 @@ jobs:
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
 
       # build all the image with production docker files
-      - name: build vite app
+      - name: build vite container
         run: docker build -t nsnhatlong/vite-app ./vite-app
-      - run: docker build -t nsnhatlong/nginx ./nginx
-      - run: docker build -t nsnhatlong/express ./express
-      - run: docker build -t nsnhatlong/worker ./worker
+      - name: build nginx routing container
+        run: docker build -t nsnhatlong/nginx ./nginx
+      - name: build express container
+        run: docker build -t nsnhatlong/express ./express
+      - name: build worker container
+        run: docker build -t nsnhatlong/worker ./worker
 
       # push all the image to docker hub
       - name: push vite-app to docker hub
