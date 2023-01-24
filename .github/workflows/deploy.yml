@@ -12,11 +12,10 @@ jobs:
     steps:
       - name: get code from github
         uses: actions/checkout@v3
-      - name: build dev version of react-app
-        run: docker build ./react-app -f ./react-app/Dockerfile.dev -t nsnhatlong/react-app
-      - name: run react-app in dev mode
-        run: docker run -e CI=true nsnhatlong/react-app npm test
-
+      - name: build dev version of vite-app
+        run: docker build ./vite-app -f ./vite-app/Dockerfile.dev -t nsnhatlong/vite-app
+      - name: run vite-app in dev mode
+        run: docker run nsnhatlong/vite-app npm test run
   build:
     needs: test
     runs-on: ubuntu-latest
@@ -29,15 +28,18 @@ jobs:
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
 
       # build all the image with production docker files
-      - name: build react app
-        run: docker build -t nsnhatlong/react-app ./react-app
+      - name: build vite app
+        run: docker build -t nsnhatlong/vite-app ./vite-app
       - run: docker build -t nsnhatlong/nginx ./nginx
       - run: docker build -t nsnhatlong/express ./express
       - run: docker build -t nsnhatlong/worker ./worker
 
       # push all the image to docker hub
-      - name: push react-app to docker hub
-        run: docker push nsnhatlong/react-app
-      - run: docker push nsnhatlong/nginx
-      - run: docker push nsnhatlong/express
-      - run: docker push nsnhatlong/worker
+      - name: push vite-app to docker hub
+        run: docker push nsnhatlong/vite-app
+      - name: push nginx (router) to docker hub
+        run: docker push nsnhatlong/nginx
+      - name: push express image to docker hub
+        run: docker push nsnhatlong/express
+      - name: push work image to dockerhub
+        run: docker push nsnhatlong/worker
