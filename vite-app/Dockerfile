@@ -12,5 +12,5 @@ RUN npm run build
 # copy files from build images into nginx image
 FROM nginx
 EXPOSE 5173
-COPY COPY --from=builder /app/dist /usr/share/nginx/html
+COPY --from=builder /app/dist /usr/share/nginx/html
 COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
