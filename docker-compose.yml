@@ -39,13 +39,13 @@ services:
   # service 5:
   client:
     build:
-      context: ./react-app
+      context: ./vite-app
       dockerfile: Dockerfile.dev
     environment:
       - WDS_SOCKET_PORT=0
     volumes:
       - /app/node_modules
-      - ./react-app:/app
+      - ./vite-app:/app
   # service 6:
   nginx:
     restart: always
