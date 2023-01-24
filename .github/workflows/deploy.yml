@@ -13,7 +13,7 @@ jobs:
       - name: get code from github
         uses: actions/checkout@v3
       - name: build dev version of react-app
-        uses: docker build ./react-app -f ./react-app/Dockerfile.dev -t nsnhatlong/react-app
+        run: docker build ./react-app -f ./react-app/Dockerfile.dev -t nsnhatlong/react-app
       - name: run react-app in dev mode
         run: docker run -e CI=true nsnhatlong/react-app npm test
 
