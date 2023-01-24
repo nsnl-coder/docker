@@ -1,59 +1,31 @@
 version: '3'
 services:
-  # service 1
-  postgres:
-    image: 'postgres:latest' # run using postgres image
-    environment:
-      - POSTGRES_PASSWORD=postgres_password # set password for postgres
-
-  # service 2
-  redis:
-    image: 'redis:latest' # run using redis image
-  # service 3
-  api:
-    build:
-      context: ./express # path to Dockerfile.dev
-      dockerfile: Dockerfile.dev # use Dockerfile.dev instead if Dockerfile
-    environment: # env variables that being used in ./express
-      - REDIS_HOST=redis # name of redis service
-      - REDIS_PORT=6379 # default port that redis
-      - PGHOST=postgres # postgres service name
-      - PGDATABASE=postgres #default
-      - PGUSER=postgres #default
-      - PGPASSWORD=postgres_password # password to login
-      - PGPORT=5432 #default
-    volumes:
-      - /app/node_modules # ignore node_modules folder
-      - ./express:/app # copy everything from . to app
-  # service 4
-  worker:
-    build:
-      context: ./worker
-      dockerfile: Dockerfile.dev
-    environment:
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-    volumes:
-      - /app/node_modules
-      - ./worker:/app
-  # service 5:
   client:
-    build:
-      context: ./vite-app
-      dockerfile: Dockerfile.dev
+    image: 'nsnhatlong/client'
+    mem_limit: 128m
+    hostname: client
+  api:
+    image: 'nsnhatlong/api'
+    mem_limit: 128m
+    hostname: api
     environment:
-      - WDS_SOCKET_PORT=0
-    volumes:
-      - /app/node_modules
-      - ./vite-app:/app
-  # service 6:
+      - REDIS_HOST=$REDIS_HOST
+      - REDIS_PORT=$REDIS_PORT
+      - PGUSER=$PGUSER
+      - PGHOST=$PGHOST
+      - PGDATABASE=$PGDATABASE
+      - PGPASSWORD=$PGPASSWORD
+      - PGPORT=$PGPORT
+  worker:
+    image: 'nsnhatlong/worker'
+    mem_limit: 128m
+    hostname: worker
+    environment:
+      - REDIS_HOST=$REDIS_HOST
+      - REDIS_PORT=$REDIS_PORT
   nginx:
-    restart: always
-    depends_on:
-      - api
-      - client
-    build:
-      context: ./nginx
-      dockerfile: Dockerfile.dev
+    image: 'nsnhatlong/nginx'
+    mem_limit: 128m
+    hostname: nginx
     ports:
-      - 3050:80
+      - '80:80'

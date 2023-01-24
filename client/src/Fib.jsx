@@ -44,7 +44,7 @@ const Fib = () => {
           }
         />
         <button>submit</button>
-        <h3>Indexes I have seen hahhaa</h3>
+        <h3>Indexes I have seen </h3>
         {state.seenIndexes.map(({ number }) => number).join(', ')}
         <h3>Calculated value</h3>
 

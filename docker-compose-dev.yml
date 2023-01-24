@@ -1,0 +1,59 @@
+version: '3'
+services:
+  # service 1
+  postgres:
+    image: 'postgres:latest' # run using postgres image
+    environment:
+      - POSTGRES_PASSWORD=postgres_password # set password for postgres
+
+  # service 2
+  redis:
+    image: 'redis:latest' # run using redis image
+  # service 3
+  api:
+    build:
+      context: ./api # path to Dockerfile.dev
+      dockerfile: Dockerfile.dev # use Dockerfile.dev instead if Dockerfile
+    environment: # env variables that being used in ./api
+      - REDIS_HOST=redis # name of redis service
+      - REDIS_PORT=6379 # default port that redis
+      - PGHOST=postgres # postgres service name
+      - PGDATABASE=postgres #default
+      - PGUSER=postgres #default
+      - PGPASSWORD=postgres_password # password to login
+      - PGPORT=5432 #default
+    volumes:
+      - /app/node_modules # ignore node_modules folder
+      - ./api:/app # copy everything from . to app
+  # service 4
+  worker:
+    build:
+      context: ./worker
+      dockerfile: Dockerfile.dev
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    volumes:
+      - /app/node_modules
+      - ./worker:/app
+  # service 5:
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile.dev
+    environment:
+      - WDS_SOCKET_PORT=0
+    volumes:
+      - /app/node_modules
+      - ./client:/app
+  # service 6:
+  nginx:
+    restart: always
+    depends_on:
+      - api
+      - client
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile.dev
+    ports:
+      - 80:80

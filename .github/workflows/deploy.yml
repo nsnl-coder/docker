@@ -12,10 +12,10 @@ jobs:
     steps:
       - name: get code from github
         uses: actions/checkout@v3
-      - name: build dev version of vite-app
-        run: docker build ./vite-app -f ./vite-app/Dockerfile.dev -t nsnhatlong/vite-app
-      - name: run vite-app in dev mode
-        run: docker run nsnhatlong/vite-app npm test run
+      - name: build dev version of client
+        run: docker build ./client -f ./client/Dockerfile.dev -t nsnhatlong/client
+      - name: run client in dev mode
+        run: docker run nsnhatlong/client npm test run
   build:
     needs: test
     runs-on: ubuntu-latest
@@ -29,20 +29,20 @@ jobs:
 
       # build all the image with production docker files
       - name: build vite container
-        run: docker build -t nsnhatlong/vite-app ./vite-app
+        run: docker build -t nsnhatlong/client ./client
       - name: build nginx routing container
         run: docker build -t nsnhatlong/nginx ./nginx
-      - name: build express container
-        run: docker build -t nsnhatlong/express ./express
+      - name: build api container
+        run: docker build -t nsnhatlong/api ./api
       - name: build worker container
         run: docker build -t nsnhatlong/worker ./worker
 
       # push all the image to docker hub
-      - name: push vite-app to docker hub
-        run: docker push nsnhatlong/vite-app
+      - name: push client to docker hub
+        run: docker push nsnhatlong/client
       - name: push nginx (router) to docker hub
         run: docker push nsnhatlong/nginx
-      - name: push express image to docker hub
-        run: docker push nsnhatlong/express
+      - name: push api image to docker hub
+        run: docker push nsnhatlong/api
       - name: push work image to dockerhub
         run: docker push nsnhatlong/worker
