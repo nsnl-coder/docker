@@ -1,0 +1,41 @@
+name: Deploy MultiDocker
+
+# trigger action when new code push to fullstack-app branch
+on:
+  push:
+    branches:
+      - fullstack-app
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: get code from github
+        uses: actions/checkout@v3
+      - name: build dev version of react-app
+        uses: docker build ./react-app -f ./react-app/Dockerfile.dev -t nsnhatlong/react-app
+      - name: run react-app in dev mode
+        run: docker run -e CI=true nsnhatlong/react-app npm test
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: get code from github
+        uses: actions/checkout@v3
+      - name: login to docker account
+        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+
+      # build all the image with production docker files
+      - name: build react app
+        run: docker build -t nsnhatlong/react-app ./react-app
+      - run: docker build -t nsnhatlong/nginx ./nginx
+      - run: docker build -t nsnhatlong/express ./express
+      - run: docker build -t nsnhatlong/worker ./worker
+
+      # push all the image to docker hub
+      - name: push react-app to docker hub
+        run: docker push nsnhatlong/react-app
+      - run: docker push nsnhatlong/nginx
+      - run: docker push nsnhatlong/express
+      - run: docker push nsnhatlong/worker
