@@ -46,3 +46,14 @@ jobs:
         run: docker push nsnhatlong/api
       - name: push work image to dockerhub
         run: docker push nsnhatlong/worker
+      - name: Deploy to EB
+        uses: einaregilsson/beanstalk-deploy@v18
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
+          application_name: multi-docker
+          environment_name: Multidocker-env
+          existing_bucket_name: elasticbeanstalk-us-east-1-553837672209
+          region: us-east-1
+          version_label: ${{ github.sha }}
+          deployment_package: deploy.zip
