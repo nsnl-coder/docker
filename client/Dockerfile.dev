@@ -1,0 +1,12 @@
+# syntax=docker/dockerfile:1
+FROM node:lts-alpine3.16
+
+WORKDIR /app
+
+RUN npm i -g npm@9.3.1
+COPY package.json .
+RUN npm i
+COPY  . .
+EXPOSE 5173
+
+CMD ["npm", "run","dev"]
