@@ -38,8 +38,11 @@ jobs:
         with:
           cluster_name: multi-cluster
           location: us-central1-c
+
       - name: set pg password
-        run: kubectl create secret generic pgpassword --from-literal PGPASSWORD=${{ secrets.PG_PASSWORD }}
+        run: |-
+          kubectl delete secret pgpassword --ignore-not-found
+          kubectl create secret generic pgpassword --from-literal PGPASSWORD=${{ secrets.PG_PASSWORD }}
 
       - name: Build
         run: |-
